@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+# xteam-urbot
+
+echo "
+            🆇🆃🅴🅰🅼-🆄🆁🅱🅾🆃
+
+      Visit @xteam_cloner for updates!!
+
+"
+if [ -f .env ] ; then 
+    set -o allexport; 
+    source .env; 
+    set +o allexport ; 
+fi
+
+if [ "$SESSION2" ] || [ "$SESSION1" ] ; then 
+    echo "                    -----------------------------------
+                            Starting Multi Client 
+                    -----------------------------------"
+    python3 multi_client.py 
+else 
+    echo "Starting in Single-Client Mode..."
+    python3 -m xteam 
+fi
