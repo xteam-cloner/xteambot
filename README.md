@@ -11,7 +11,7 @@ Core library of [xteam-urbot](https://github.com/xteam-cloner/xteam-urbot), a py
 
 # Installation
 ```bash
-pip3 install git+https://github.com/xteam-cloner/xteam
+pip3 install git+https://github.com/xteam-cloner/xteambot
 ```
 
 # Documentation 
@@ -43,6 +43,7 @@ Userbot is licensed under [GNU Affero General Public License](https://www.gnu.or
 # Credits
 * [![TeamX-Devs](https://img.shields.io/static/v1?label=TeamX&message=devs&color=critical)](https://t.me/UltroidDevs)
 * [Lonami](https://github.com/Lonami) for [Telethon](https://github.com/LonamiWebs/Telethon)
+
 
 
 
