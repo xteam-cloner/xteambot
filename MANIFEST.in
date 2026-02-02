@@ -1,0 +1,4 @@
+recursive-include xteam/assistant *
+recursive-include xteam/plugins *
+recursive-include xteam/resources *
+recursive-include xteam/strings *
