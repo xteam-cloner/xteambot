@@ -1,8 +1,15 @@
 import re
-
 import setuptools
 
-requirements = ["redis", "hiredis", "python-decouple", "python-dotenv"]
+requirements = [
+    "redis", 
+    "hiredis", 
+    "python-decouple", 
+    "python-dotenv",
+    "telethon",
+    "pillow",
+    "aiohttp",
+]
 
 with open("xteam/version.py", "rt", encoding="utf8") as x:
     version = re.search(r'__version__ = "(.*?)"', x.read()).group(1)
@@ -10,41 +17,45 @@ with open("xteam/version.py", "rt", encoding="utf8") as x:
 with open("README.md", "r", encoding="utf-8") as fh:
     long_description = fh.read()
 
-name = "xteam"
-author = "TeamX"
-author_email = "xteamji@gmail.com"
-description = "A Secure and Powerful Python-Telethon Based Library For xteam Userbot."
-license_ = "GNU AFFERO GENERAL PUBLIC LICENSE (v3)"
-url = "https://github.com/xteam-cloner/xteam"
-project_urls = {
-    "Bug Tracker": "https://github.com/xteam-cloner/xteam/issues",
-    "Documentation": "https://ultroid.tech",
-    "Source Code": "https://github.com/xteam-cloner/xteam",
-}
-classifiers = [
-    "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3.8",
-    "Programming Language :: Python :: 3.9",
-    "Programming Language :: Python :: 3.10",
-    "Programming Language :: Python :: 3.11",
-    "Programming Language :: Python :: 3.12",
-    "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
-    "Operating System :: OS Independent",
-]
-
 setuptools.setup(
-    name=name,
+    name="xteam",
     version=version,
-    author=author,
-    author_email=author_email,
-    description=description,
+    author="TeamX",
+    author_email="xteamji@gmail.com",
+    description="A Secure and Powerful Python-Telethon Based Library For xteam Userbot.",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url=url,
-    project_urls=project_urls,
-    license=license_,
+    url="https://github.com/xteam-cloner/xteambot",
+    project_urls={
+        "Bug Tracker": "https://github.com/xteam-cloner/xteambot/issues",
+        "Source Code": "https://github.com/xteam-cloner/xteambot",
+    },
+    license="GNU AFFERO GENERAL PUBLIC LICENSE (v3)",
     packages=setuptools.find_packages(),
+    include_package_data=True, 
+    package_data={
+        "xteam": [
+            "resources/*", 
+            "plugins/*", 
+            "strings/*", 
+            "assistant/*"
+        ],
+    },
     install_requires=requirements,
-    classifiers=classifiers,
-    python_requires=">3.7, <3.13",
+    entry_points={
+        "console_scripts": [
+            "xteambot=xteam.__main__:main", 
+        ],
+    },
+    classifiers=[
+        "Programming Language :: Python :: 3",
+        "Programming Language :: Python :: 3.8",
+        "Programming Language :: Python :: 3.9",
+        "Programming Language :: Python :: 3.10",
+        "Programming Language :: Python :: 3.11",
+        "Programming Language :: Python :: 3.12",
+        "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
+        "Operating System :: OS Independent",
+    ],
+    python_requires=">=3.8, <3.13",
 )
