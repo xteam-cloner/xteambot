@@ -1,15 +1,9 @@
 import re
 import setuptools
 
-requirements = [
-    "redis", 
-    "hiredis", 
-    "python-decouple", 
-    "python-dotenv",
-    "telethon",
-    "pillow",
-    "aiohttp",
-]
+def get_requirements():
+    with open("requirements.txt", "r", encoding="utf-8") as f:
+        return [line.strip() for line in f if line.strip() and not line.startswith("#")]
 
 with open("xteam/version.py", "rt", encoding="utf8") as x:
     version = re.search(r'__version__ = "(.*?)"', x.read()).group(1)
@@ -41,7 +35,7 @@ setuptools.setup(
             "assistant/*"
         ],
     },
-    install_requires=requirements,
+    install_requires=get_requirements(),
     entry_points={
         "console_scripts": [
             "xteambot=xteam.__main__:main", 
