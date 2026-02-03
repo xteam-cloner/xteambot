@@ -4,6 +4,7 @@ import random
 import shutil
 import time
 import platform
+import sys
 from random import randint
 from telethon import __version__ as tver
 from pyrogram import __version__ as pver
@@ -87,7 +88,7 @@ def update_envs():
 
 async def startup_stuff():
     from .. import udB
-    folders = ["resources/auth", "resources/downloads"]
+    folders = ["resources/auth", "resources/downloads", "resources/extras"]
     for f in folders:
         f_path = os.path.join(BASE_PATH, f)
         if not os.path.isdir(f_path):
@@ -104,7 +105,6 @@ async def startup_stuff():
     if GT:
         with open(os.path.join(BASE_PATH, "resources/auth/gdrive_creds.json"), "w") as t_file:
             t_file.write(GT)
-    if udB.get_key("AUTH_TOKEN"): udB.del_key("AUTH_TOKEN")
     MM, MP = udB.get_key("MEGA_MAIL"), udB.get_key("MEGA_PASS")
     if MM and MP:
         with open(".megarc", "w") as mega:
@@ -152,17 +152,12 @@ async def autopilot():
             udB.del_key("LOG_CHANNEL")
             channel = None
     if not channel:
-        r = await ultroid_bot(CreateChannelRequest(title="My Userbot Logs", about="My Userbot Log Group", megagroup=True))
+        r = await ultroid_bot(CreateChannelRequest(title="My Userbot Logs", megagroup=True))
         chat = r.chats[0]
         channel = get_peer_id(chat)
         udB.set_key("LOG_CHANNEL", channel)
     try: await ultroid_bot(InviteToChannelRequest(int(channel), [asst.me.username]))
     except Exception: pass
-    if isinstance(chat.photo, ChatPhotoEmpty):
-        photo, _ = await download_file("https://files.catbox.moe/k9ljse.jpg", "channelphoto.jpg")
-        ll = await ultroid_bot.upload_file(photo)
-        await ultroid_bot(EditPhotoRequest(int(channel), InputChatUploadedPhoto(ll)))
-        os.remove(photo)
 
 async def customize():
     from .. import asst, udB, ultroid_bot
@@ -224,4 +219,3 @@ def _version_changes(udb):
             key_val = udb.get(_)
             new_ = [int(z) if z.isdigit() or (z.startswith("-") and z[1:].isdigit()) else z for z in key_val.split()]
             udb.set_key(_, new_)
-        
