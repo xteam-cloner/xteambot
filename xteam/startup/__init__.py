@@ -11,22 +11,15 @@ else:
     Var = None
 
 def where_hosted():
-    if os.getenv("DYNO"):
-        return "heroku"
-    if os.getenv("RAILWAY_STATIC_URL"):
-        return "railway"
-    if os.getenv("OKTETO_TOKEN"):
-        return "okteto"
-    if os.getenv("KUBERNETES_PORT"):
-        return "qovery | kubernetes"
+    if os.getenv("DYNO"): return "heroku"
+    if os.getenv("RAILWAY_STATIC_URL"): return "railway"
+    if os.getenv("OKTETO_TOKEN"): return "okteto"
+    if os.getenv("KUBERNETES_PORT"): return "qovery | kubernetes"
     if os.getenv("RUNNER_USER") or os.getenv("HOSTNAME"):
-        if os.getenv("USER") == "codespace":
-            return "codespace"
+        if os.getenv("USER") == "codespace": return "codespace"
         return "github actions"
-    if os.getenv("ANDROID_ROOT"):
-        return "termux"
-    if os.getenv("FLY_APP_NAME"):
-        return "fly.io"
+    if os.getenv("ANDROID_ROOT"): return "termux"
+    if os.getenv("FLY_APP_NAME"): return "fly.io"
     return "VPS"
 
 LOGS = getLogger("Xteam")
@@ -39,12 +32,17 @@ if run_as_module:
     from ..version import ultroid_version
 
     file = f"userbot{sys.argv[6]}.log" if len(sys.argv) > 6 else "userbot.log"
-
-    if os.path.exists(file):
-        os.remove(file)
+    if os.path.exists(file): os.remove(file)
 
     HOSTED_ON = where_hosted()
     TelethonLogger.setLevel(WARNING)
+
+    # PERBAIKAN PATH DISINI
+    BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    if not os.path.exists(os.path.join(BASE_DIR, "plugins")):
+        LOGS.error("'plugins' folder not found!")
+        LOGS.info(f"Make sure the package is installed correctly. Checked: {BASE_DIR}")
+        sys.exit()
 
     _, v, __ = platform.python_version_tuple()
     if int(v) < 10:
@@ -54,12 +52,7 @@ if run_as_module:
     _ask_input()
 
     _LOG_FORMAT = "%(asctime)s | %(name)s [%(levelname)s] : %(message)s"
-    basicConfig(
-        format=_LOG_FORMAT,
-        level=INFO,
-        datefmt="%m/%d/%Y, %H:%M:%S",
-        handlers=[FileHandler(file), StreamHandler()],
-    )
+    basicConfig(format=_LOG_FORMAT, level=INFO, datefmt="%m/%d/%Y, %H:%M:%S", handlers=[FileHandler(file), StreamHandler()])
 
     try:
         import coloredlogs
