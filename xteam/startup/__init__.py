@@ -23,9 +23,18 @@ def where_hosted():
 HOSTED_ON = where_hosted()
 TelethonLogger.setLevel(WARNING)
 
-_LOG_FORMAT = "%m/%d/%Y, %H:%M:%S | %(name)s [%(levelname)s] : %(message)s"
-basicConfig(format=_LOG_FORMAT, level=INFO, handlers=[StreamHandler()])
+# PERBAIKAN DI SINI: Gunakan format yang lebih aman
+_LOG_FORMAT = "%(asctime)s | %(name)s [%(levelname)s] : %(message)s"
+_DATE_FORMAT = "%m/%d/%Y, %H:%M:%S"
+
+basicConfig(
+    format=_LOG_FORMAT, 
+    datefmt=_DATE_FORMAT, 
+    level=INFO, 
+    handlers=[StreamHandler()]
+)
 
 _ask_input()
 
-LOGS.info(f"Python: {platform.python_version()} | Xteam: {__xteam__} | Host: {HOSTED_ON}")
+# Gunakan format standar logging, jangan langsung f-string di dalam .info jika ragu
+LOGS.info("Python: %s | Xteam: %s | Host: %s", platform.python_version(), __xteam__, HOSTED_ON)
