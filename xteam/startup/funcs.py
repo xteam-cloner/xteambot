@@ -87,38 +87,28 @@ def update_envs():
 
 async def startup_stuff():
     from .. import udB
-    
     folders = ["resources/auth", "resources/downloads"]
     for f in folders:
         f_path = os.path.join(BASE_PATH, f)
         if not os.path.isdir(f_path):
             os.makedirs(f_path, exist_ok=True)
-
     CT = udB.get_key("CUSTOM_THUMBNAIL")
     if CT:
         path = os.path.join(BASE_PATH, "resources/extras/thumbnail.jpg")
         ULTConfig.thumb = path
-        try:
-            await download_file(CT, path)
-        except Exception as er:
-            LOGS.exception(er)
+        try: await download_file(CT, path)
+        except Exception as er: LOGS.exception(er)
     elif CT is False:
         ULTConfig.thumb = None
-
     GT = udB.get_key("GDRIVE_AUTH_TOKEN")
     if GT:
         with open(os.path.join(BASE_PATH, "resources/auth/gdrive_creds.json"), "w") as t_file:
             t_file.write(GT)
-
-    if udB.get_key("AUTH_TOKEN"):
-        udB.del_key("AUTH_TOKEN")
-
-    MM = udB.get_key("MEGA_MAIL")
-    MP = udB.get_key("MEGA_PASS")
+    if udB.get_key("AUTH_TOKEN"): udB.del_key("AUTH_TOKEN")
+    MM, MP = udB.get_key("MEGA_MAIL"), udB.get_key("MEGA_PASS")
     if MM and MP:
         with open(".megarc", "w") as mega:
             mega.write(f"[Login]\nUsername = {MM}\nPassword = {MP}")
-
     TZ = udB.get_key("TIMEZONE")
     if TZ and timezone:
         try:
@@ -151,13 +141,11 @@ async def autobot():
         token = isdone.split("`")[1]
         udB.set_key("BOT_TOKEN", token)
         await enable_inline(ultroid_bot, username)
-    else:
-        sys.exit(1)
+    else: sys.exit(1)
 
 async def autopilot():
     from .. import asst, udB, ultroid_bot
     channel = udB.get_key("LOG_CHANNEL")
-    new_channel = None
     if channel:
         try: chat = await ultroid_bot.get_entity(channel)
         except Exception:
@@ -165,13 +153,11 @@ async def autopilot():
             channel = None
     if not channel:
         r = await ultroid_bot(CreateChannelRequest(title="My Userbot Logs", about="My Userbot Log Group", megagroup=True))
-        new_channel, chat = True, r.chats[0]
+        chat = r.chats[0]
         channel = get_peer_id(chat)
         udB.set_key("LOG_CHANNEL", channel)
-
     try: await ultroid_bot(InviteToChannelRequest(int(channel), [asst.me.username]))
     except Exception: pass
-
     if isinstance(chat.photo, ChatPhotoEmpty):
         photo, _ = await download_file("https://files.catbox.moe/k9ljse.jpg", "channelphoto.jpg")
         ll = await ultroid_bot.upload_file(photo)
@@ -181,10 +167,8 @@ async def autopilot():
 async def customize():
     from .. import asst, udB, ultroid_bot
     try:
-        chat_id = udB.get_key("LOG_CHANNEL")
         if asst.me.photo: return
         UL = f"@{asst.me.username}"
-        sir = f"@{ultroid_bot.me.username}" if ultroid_bot.me.username else ultroid_bot.me.first_name
         file = os.path.join(BASE_PATH, "resources/extras/profile.jpg")
         if not os.path.exists(file):
             file, _ = await download_file("https://files.catbox.moe/k9ljse.jpg", file)
@@ -232,3 +216,12 @@ async def enable_inline(ultroid_bot, username):
     await ultroid_bot.send_message(bf, f"@{username}")
     await asyncio.sleep(1)
     await ultroid_bot.send_message(bf, "Search")
+
+def _version_changes(udb):
+    for _ in ["BOT_USERS", "BOT_BLS", "VC_SUDOS", "SUDOS", "CLEANCHAT", "LOGUSERS", "PLUGIN_CHANNEL", "CH_SOURCE", "CH_DESTINATION", "BROADCAST"]:
+        key = udb.get_key(_)
+        if key and str(key)[0] != "[":
+            key_val = udb.get(_)
+            new_ = [int(z) if z.isdigit() or (z.startswith("-") and z[1:].isdigit()) else z for z in key_val.split()]
+            udb.set_key(_, new_)
+        
